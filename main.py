@@ -34,10 +34,8 @@ def get_cnpjs():
 # cnaes = get_cnaes()
 cnpjs = get_cnpjs()
 
-consulta = CNPJScrapper(cnpjs)
+consulta = CNPJScrapper(cnpjs, 'speedio')
 resultado = asyncio.run(consulta.execute(verbose=True, show_results=True))
-print(resultado)
-resultado.to_excel('CNPJS_x_CNAES.xlsx')
-cnaes = get_cnaes()
-cnpjs = get_cnpjs()
 
+result = pd.DataFrame(resultado)
+result.to_excel('Result.xlsx', float_format='%.0f')

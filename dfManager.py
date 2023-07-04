@@ -37,10 +37,6 @@ class DataframeManager:
             chunk = next(self.iterator)
             self.loaded_chunks.append(chunk)
             self.df = pd.concat(self.loaded_chunks)
-            self.__apply_filters(self.filters)
-
-            return self.df
-
             self.apply_filters(self.filters)
 
             return self.df
@@ -54,7 +50,7 @@ class DataframeManager:
         file_size = getsize(self.path)  # Pega o tamanho do arquivo
 
         if file_size > size_limit and self.path.endswith('.csv'):
-            self.chunksize = 10 ** 6  # Define o tamanho das chunks (1 milhão de linhas)
+            self.chunksize = 1000  # Define o tamanho das chunks (1 milhão de linhas)
             f_name = self.path[2:].capitalize()
             size = f'{file_size / 1024 / 1024:.2f}'
             print(
@@ -62,8 +58,6 @@ class DataframeManager:
                 end=' ')
             print(
                 f"{Colors.PURPLE}[CHUNKS]{Colors.RESET} {self.chunksize} {Colors.UND_RED}LINES PER TIME{Colors.RESET}")
-            print("Arquivo: ", self.path, "Tamanho: ", file_size, "Limite: ", size_limit, end='\n')
-            self.chunksize = 10 ** 6  # Define o tamanho das chunks (1 milhão de linhas)
             self.iterator = self.__load_dataframe(self.chunksize)
             self.__next__()
 
@@ -76,16 +70,9 @@ class DataframeManager:
             print(
                 f"{Colors.PURPLE}[CHUNKS]{Colors.RESET} NO NEED")
             self.df = self.__load_dataframe()
-            self.__apply_filters(self.filters)
+            self.apply_filters(self.filters)
 
         return self.df
-
-    def __apply_filters(self, filters: dict[str, Union[list[str], str]] | None) -> DataFrame:
-        print("Arquivo: ", self.path, "Tamanho: ", file_size, "Limite: ", size_limit, end='\n')
-        self.df = self.__load_dataframe()
-        self.apply_filters(self.filters)
-
-    return self.df
 
     def apply_filters(self, filters: dict[str, Union[list[str], str]] | None) -> DataFrame:
         """
