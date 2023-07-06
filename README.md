@@ -4,9 +4,8 @@
 Tabela de Conteúdos
 =================
 <!--ts-->
-
-    * [Usage](#Uusage)
-    * [Pre Requisitos](#pre-requisitos)
+   * [Pre Requisitos](#pre-requisitos)
+   * [Usage](#usage) 
 
 <!--te-->
 <h4 align="center"> 
