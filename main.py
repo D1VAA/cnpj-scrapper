@@ -1,14 +1,14 @@
 from __future__ import annotations
-
 import pandas as pd
-from dfManager import DataframeManager
-from scrapper import CNPJScrapper
+from packages.dfmanager.DataFrameManager import DataframeManager
+from packages.scrapper import CNPJScrapper
 import asyncio
+from argparse import ArgumentParser
 
 
 def get_cnaes():
     filterlist = {'Atividade': ['Comércio', 'Indústria']}
-    data = DataframeManager('./CNAES.xlsx', filterlist)
+    data = DataframeManager('./sheets/CNAES.xlsx', filters=filterlist)
     dataframe = data.get_dataframe()
 
     # Splitting information
@@ -18,24 +18,31 @@ def get_cnaes():
 
     # Removing useless columns
     dataframe = dataframe.drop(columns=['Anexo', 'Tributação', 'FatorR', 'Alíq.(%)'], axis=1)
-    return dataframe
+    return dataframe['Código']
 
 
-def get_cnpjs():
+def get_cnpjs(size=1):
     filterlist = {'uf': ['SP', 'SC', 'RS']}
-    data = DataframeManager('./empresas.csv', filterlist)
-    g_dataframe = data.get_dataframe()
+    data = DataframeManager('./sheets/empresas.csv', filters=filterlist)
+    g_dataframe = data.get_dataframe(size)
 
     # Select cnpj column
-    dataframe = g_dataframe['cnpj']
-    return dataframe
+    dataframe = g_dataframe
+    return dataframe['cnpj']
 
 
-# cnaes = get_cnaes()
-cnpjs = get_cnpjs()
+f_cnaes = get_cnaes()
+cnpjs = get_cnpjs(1)
 
-consulta = CNPJScrapper(cnpjs, 'speedio')
+parser = ArgumentParser(description='Executa uma busca em uma lista de CNPJs e retorna as informações das organizações')
+parser.add_argument('-s', '--site', help='Seleciona o site que será feito a busca. Opções: cnpj.biz ou speedio')
+args = parser.parse_args()
+site = args.site
+assert site is not None, 'Run: python ./main.py -h'
+
+consulta = CNPJScrapper(cnpjs, site)
 resultado = asyncio.run(consulta.execute(verbose=True, show_results=True))
-
-result = pd.DataFrame(resultado)
-result.to_excel('Result.xlsx', float_format='%.0f')
+filters = {'CNAES': f_cnaes}
+exp = DataframeManager(data=resultado)
+exp.apply_filters(filters)
+print(exp)

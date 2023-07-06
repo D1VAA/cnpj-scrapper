@@ -6,8 +6,9 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from time import sleep
 from typing import Union
+from packages.html_manager import parse_resp
 
-from bcolors import Colors
+from packages.bcolors import Colors
 
 
 class CNPJScrapper:
@@ -34,43 +35,14 @@ class CNPJScrapper:
             try:
                 response.raise_for_status()
                 if self.verbose:
-                    print(f'{Colors.BG_RED}BUSCANDO{Colors.RESET}', end='\n\n')
-                    print(f'{Colors.RED}[+]{Colors.RESET} CNPJ : {Colors.RED}{cnpj}{Colors.RESET} >>>', end=' ')
+                    print(
+                        f'{Colors.YELLOW}|CONSULTA| [CNPJ] > {Colors.PURPLE}{cnpj}{Colors.RESET}',
+                        end='\n\n')
                 r = await response.read()
-                return await self.__parse_resp(cnpj, r)
+                result = await parse_resp(cnpj, r, self.site, self.verbose)
+                self.dict_data.append(result)
             except Exception as e:
                 print(e)
-
-    async def __parse_resp(self, cnpj, data) -> list or [str, str, list]:
-        if 'speedio' in self.site:
-            import json
-            j = json.loads(data)
-            infos = ['CNPJ', 'STATUS', 'SETOR', 'NOME FANTASIA', 'RAZAO SOCIAL', 'CNAE', 'CNAE PRINCIPAL CODIGO',
-                     'EMAIL', 'DDD', 'TELEFONE', 'CEP']
-            ext = {x: j[x] for x in infos}
-            if self.verbose:
-                print(f'{Colors.BLUE}[-]{Colors.RESET} NOME : {Colors.BLUE}{ext["NOME FANTASIA"]}{Colors.RESET}')
-                print(
-                    f'{Colors.PURPLE}[*]{Colors.RESET} CNAES : {Colors.PURPLE}{ext["CNAE PRINCIPAL CODIGO"]}{Colors.RESET}',
-                    end='\n\n\n\n')
-            self.dict_data.append(ext)
-            return ext
-
-        else:
-            soup = BeautifulSoup(data, 'html.parser')
-            title = [x.get_text() for x in soup.find_all('p') if 'Razão Social' in x.get_text()][0]
-            c_name = title.replace('Razão Social: ', '')
-            cnaes = soup.find_all('u')
-            cnaes = [''.join([x for x in cnae.get_text() if x.isdigit()]) for cnae in cnaes]
-            if self.verbose:
-                print(f'{Colors.BLUE}[-]{Colors.RESET} NOME : {Colors.BLUE}{c_name}{Colors.RESET}')
-                print(f'{Colors.PURPLE}[*]{Colors.RESET} CNAES :', end=' ')
-                for cnae in cnaes:
-                    print(f'{Colors.PURPLE}{cnae}{Colors.RESET}', end=' ')
-                print('\n\n\n\n')
-            ext = {'NOME': c_name, 'CNPJ': cnpj, 'CNAES': cnaes}
-            self.dict_data.append(ext)
-            return ext
 
     async def __manage_requests(self):
         try:
