@@ -5,7 +5,7 @@ Tabela de Conteúdos
 =================
 <!--ts-->
 
-    * [Usage](#Usage)
+    * [Usage](#Uusage)
     * [Pre Requisitos](#pre-requisitos)
 
 <!--te-->
@@ -20,11 +20,15 @@ Tabela de Conteúdos
 - [x] CNPJs Scrapper.
 - [ ] File export options.
 
+Pré requisitos
+=================
 ### Pré-requisitos
 
 Necessário ter instalado as seguintes bibliotecas python:
 [aiohttp], [pandas], [beautifulsoup4]
 
+Usage
+=================
 ### Rodando o Script
 
 ```bash
