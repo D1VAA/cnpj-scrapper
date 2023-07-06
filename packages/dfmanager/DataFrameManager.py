@@ -49,12 +49,15 @@ class DataframeManager:
             raise StopIteration
 
     def get_dataframe(self, s=1) -> Union[DataFrame, Iterator]:
-        """Método que retorna o dataframe. Para arquivos largos, retorna em chunks"""
+        """
+        Método que retorna o dataframe. Para arquivos largos, retorna em chunks
+        :param s: value * 1000 (lines to be read per time)
+        """
         size_limit = 10 * 2 ** 20  # Tamanho limite do arquivo = 10 MB
         file_size = getsize(self.path)  # Pega o tamanho do arquivo
 
         if file_size > size_limit and self.path.endswith('.csv'):
-            self.chunksize = 1000  # Define o tamanho das chunks (1 milhão de linhas)
+            self.chunksize = 1000  # Define o tamanho das chunks 
             f_name = self.path[2:].capitalize()
             size = f'{file_size / 1024 / 1024:.2f}'
             print(
@@ -106,6 +109,7 @@ class DataframeManager:
         repl = ';/.,-\\=-!@#$%¨&*()`[]?:|'
         empty_str = ' ' * len(repl)
         table = str.maketrans(repl, empty_str)
+
         filters = {k.translate(table): [val.translate(table) for val in v] for k, v in filters.items()}
         if filters is not None:
             for col, cond in filters.items():
