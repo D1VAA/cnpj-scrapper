@@ -12,6 +12,7 @@
     🚧  React Select 🚀 Em construção...  🚧
 </h4>
 =================
+
 ### Features
 
 - [x] DataFrame Handler para arquios grandes.
