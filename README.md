@@ -1,11 +1,12 @@
 # CNPJs Info Scrapper Script
 
 ## Script feito para consultar uma lista de CNPJs e retornar as informações da organização consultada.
+Tabela de Conteúdos
 =================
 <!--ts-->
 
-    *[Usage](#Usage)
-    *[Pre Requisitos](#pre-requisitos)
+    * [Usage](#Usage)
+    * [Pre Requisitos](#pre-requisitos)
 
 <!--te-->
 <h4 align="center"> 
