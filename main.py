@@ -34,7 +34,7 @@ def get_cnpjs():
 # cnaes = get_cnaes()
 cnpjs = get_cnpjs()
 
-consulta = CNPJScrapper(cnpjs, 'speedio')
+consulta = CNPJScrapper(cnpjs, 'cnpj.biz')
 resultado = asyncio.run(consulta.execute(verbose=True, show_results=True))
 
 result = pd.DataFrame(resultado)

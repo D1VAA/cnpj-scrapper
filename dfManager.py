@@ -50,7 +50,7 @@ class DataframeManager:
         file_size = getsize(self.path)  # Pega o tamanho do arquivo
 
         if file_size > size_limit and self.path.endswith('.csv'):
-            self.chunksize = 1000  # Define o tamanho das chunks (1 milhão de linhas)
+            self.chunksize = 1000  # Define o tamanho das chunks (1 mil)
             f_name = self.path[2:].capitalize()
             size = f'{file_size / 1024 / 1024:.2f}'
             print(
