@@ -44,16 +44,11 @@ def get_cnpjs(size=1):
 #cnaes = get_cnaes()
 cnpjs = get_cnpjs()
 
-<<<<<<< HEAD
-consulta = CNPJScrapper(cnpjs, 'cnpj.biz')
-resultado = asyncio.run(consulta.execute(verbose=True, show_results=True))
-=======
 consulta = Scrapper(cnpjs, site)
 resultado = consulta.run(show_results=True)
 resultado['CNAES'] = resultado['CNAES'].str.split(',')
 resultado = resultado.explode('CNAES')
 resultado.to_excel('Result.xlsx')
->>>>>>> feature
 
 #filters = {'CNAES': cnaes}
 #exp.apply_filters(filters)
