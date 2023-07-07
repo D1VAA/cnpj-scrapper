@@ -4,14 +4,6 @@ import asyncio
 from packages.dfmanager.DataFrameManager import DataframeManager
 from packages.scrapper import Scrapper
 from menu import MenuConstructor
-from argparse import ArgumentParser
-
-parser = ArgumentParser(description='Executa uma busca em uma lista de CNPJs e retorna as informações das organizações')
-parser.add_argument('-s', '--site', help='Seleciona o site que será feito a busca. Opções: cnpj.biz ou speedio')
-args = parser.parse_args()
-site = args.site
-
-assert site is not None, 'Run: python ./main.py -h'
 
 
 def get_cnaes():
@@ -42,13 +34,19 @@ def get_cnpjs(size=1):
     return dataframe
 
 
-cnaes = get_cnaes()
-cnpjs = get_cnpjs()
-consulta = Scrapper(cnpjs, site)
-menu = MenuConstructor()
-menu.add_option(['exec'], attr=consulta.run(show_results=True))
+def exec(parametro=None):
+    """
+    Função para teste
+    """
+    print("Teste!")
 
-resultado = consulta.run(show_results=True)
-resultado['CNAES'] = resultado['CNAES'].str.split(',')
-resultado = resultado.explode('CNAES')
-resultado.to_excel('Result.xlsx')
+
+menu = MenuConstructor()
+menu.add_option('exec', attr=exec)
+menu.run()
+# menu.add_option(['exec'], attr=consulta.run(show_results=True))
+
+# resultado = consulta.run(show_results=True)
+# resultado['CNAES'] = resultado['CNAES'].str.split(',')
+# resultado = resultado.explode('CNAES')
+# resultado.to_excel('Result.xlsx')
