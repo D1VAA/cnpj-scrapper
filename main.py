@@ -5,7 +5,6 @@ from packages.scrapper import Scrapper
 import asyncio
 from argparse import ArgumentParser
 
-
 parser = ArgumentParser(description='Executa uma busca em uma lista de CNPJs e retorna as informações das organizações')
 parser.add_argument('-s', '--site', help='Seleciona o site que será feito a busca. Opções: cnpj.biz ou speedio')
 args = parser.parse_args()
@@ -44,16 +43,13 @@ def get_cnpjs(size=1):
 #cnaes = get_cnaes()
 cnpjs = get_cnpjs()
 
-<<<<<<< HEAD
 consulta = CNPJScrapper(cnpjs, 'cnpj.biz')
 resultado = asyncio.run(consulta.execute(verbose=True, show_results=True))
-=======
 consulta = Scrapper(cnpjs, site)
 resultado = consulta.run(show_results=True)
 resultado['CNAES'] = resultado['CNAES'].str.split(',')
 resultado = resultado.explode('CNAES')
 resultado.to_excel('Result.xlsx')
->>>>>>> feature
 
 #filters = {'CNAES': cnaes}
 #exp.apply_filters(filters)
