@@ -1,3 +1,12 @@
+from __future__ import annotations
+from typing import Iterator, Union
+from os.path import getsize
+import pandas as pd
+from pandas import DataFrame
+from packages.bcolors import Colors
+from re import sub
+
+
 class DataframeManager:
     """Classe para manipular dados de planilhas, incluindo aplicaçaão simples de filtros e tratamento de arquivos
     grandes."""

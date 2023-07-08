@@ -1,16 +1,10 @@
 from __future__ import annotations
 import pandas as pd
+import asyncio
 from packages.dfmanager.DataFrameManager import DataframeManager
 from packages.scrapper import Scrapper
-import asyncio
-from argparse import ArgumentParser
+from menu import MenuConstructor
 
-parser = ArgumentParser(description='Executa uma busca em uma lista de CNPJs e retorna as informações das organizações')
-parser.add_argument('-s', '--site', help='Seleciona o site que será feito a busca. Opções: cnpj.biz ou speedio')
-args = parser.parse_args()
-site = args.site
-
-assert site is not None, 'Run: python ./main.py -h'
 
 def get_cnaes():
     filterlist = {'Atividade': ['Comércio', 'Indústria']}
@@ -40,16 +34,19 @@ def get_cnpjs(size=1):
     return dataframe
 
 
-#cnaes = get_cnaes()
-cnpjs = get_cnpjs()
+def exec(parametro=None):
+    """
+    Função para teste
+    """
+    print("Teste!")
 
-consulta = CNPJScrapper(cnpjs, 'cnpj.biz')
-resultado = asyncio.run(consulta.execute(verbose=True, show_results=True))
-consulta = Scrapper(cnpjs, site)
-resultado = consulta.run(show_results=True)
-resultado['CNAES'] = resultado['CNAES'].str.split(',')
-resultado = resultado.explode('CNAES')
-resultado.to_excel('Result.xlsx')
 
-#filters = {'CNAES': cnaes}
-#exp.apply_filters(filters)
+menu = MenuConstructor()
+menu.add_option('exec', attr=exec)
+menu.run()
+# menu.add_option(['exec'], attr=consulta.run(show_results=True))
+
+# resultado = consulta.run(show_results=True)
+# resultado['CNAES'] = resultado['CNAES'].str.split(',')
+# resultado = resultado.explode('CNAES')
+# resultado.to_excel('Result.xlsx')
