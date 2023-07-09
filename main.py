@@ -23,7 +23,11 @@ def get_cnaes():
 
 def get_cnpjs(size=1):
     """
-    :param size: value * 1000 (lines)
+    Function that read the cnpjs of the file 'empresas.csv'
+    =======
+    Args:
+
+    :parameter size: Receive a integer number and multiply by 1.000 (represents the lines to be read)
     """
     filterlist = {'uf': ['SP', 'SC', 'RS']}
     data = DataframeManager('./sheets/empresas.csv', filters=filterlist)
@@ -34,16 +38,10 @@ def get_cnpjs(size=1):
     return dataframe
 
 
-def exec(parametro=None):
-    """
-    Função para teste
-    """
-    print("Teste!")
-
-
 menu = MenuConstructor()
-menu.add_option('exec', attr=exec)
-menu.run()
+menu.add_option('cnpjs', func=get_cnpjs)
+menu.add_option('cnaes', func=get_cnaes)
+menu._menu()
 # menu.add_option(['exec'], attr=consulta.run(show_results=True))
 
 # resultado = consulta.run(show_results=True)

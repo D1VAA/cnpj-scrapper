@@ -6,7 +6,7 @@ class Colors:
     GREEN = '\033[1;49;92m'
     CIAN = '\033[1;49;96m'
     HARD_RED = '\033[1;49;91m'
-    BG_RED = '\033[7;49;91m'
+    BG_RED = '\033[1;7;49;31m'
     BG_WHITE = '\033[7;49;37m'
     BG_WHITESMOKE = '\033[7;49;97m'
     RESET = '\033[0m'
