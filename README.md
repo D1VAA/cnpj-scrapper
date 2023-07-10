@@ -42,4 +42,4 @@ $ cd cnpj-scrapper
 $ py -m pip install -r requirements.txt
 
 # Execute o script
-$ py main.py -h
+$ py main.py
