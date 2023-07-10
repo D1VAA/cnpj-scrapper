@@ -1,15 +1,16 @@
 # CNPJs Info Scrapper Script
 
 ## Script feito para realizar Web Scrap em listas de CNPJs e retornar as informações da organização consultada.
+
+<h4 align="center"> 
+   🚀 Em construção...  🚧
+</h4>
+
 =================
 <!--ts-->
    * [Pre Requisitos](#pre-requisitos)
    * [Usage](#usage) 
 <!--te-->
-
-<h4 align="center"> 
-   🚀 Em construção...  🚧
-</h4>
 
 =================
 ### Features
