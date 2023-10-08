@@ -3,7 +3,7 @@ import pandas as pd
 import asyncio
 from packages.dfmanager.DataFrameManager import DataframeManager
 from packages.scrapper import Scrapper
-from menu import MenuConstructor
+from packages.menu_constructor.menu import MenuConstructor
 
 
 def get_cnaes():
@@ -21,7 +21,7 @@ def get_cnaes():
     return dataframe
 
 
-def get_cnpjs(size=1):
+def get_cnpjs(size: int = 1):
     """
     Function that read the cnpjs of the file 'empresas.csv'
     =======
@@ -37,14 +37,10 @@ def get_cnpjs(size=1):
     dataframe = g_dataframe['cnpj']
     return dataframe
 
+scrap = Scrapper(get_cnpjs(), 'cnpj.biz')
+results = scrap.run(verbose=True, show_results=True)
+print(results)
 
-menu = MenuConstructor()
-menu.add_option('cnpjs', func=get_cnpjs)
-menu.add_option('cnaes', func=get_cnaes)
-menu._menu()
-# menu.add_option(['exec'], attr=consulta.run(show_results=True))
-
-# resultado = consulta.run(show_results=True)
-# resultado['CNAES'] = resultado['CNAES'].str.split(',')
-# resultado = resultado.explode('CNAES')
-# resultado.to_excel('Result.xlsx')
+results['CNAES'] = results['CNAES'].str.split(',')
+results = results.explode('CNAES')
+results.to_excel('Result.xlsx')

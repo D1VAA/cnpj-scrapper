@@ -1,14 +1,4 @@
-# CNPJs Info Scrapper Script
-
-## Script feito para realizar Web Scrap em listas de CNPJs e retornar as informações da organização consultada.
-=================
-<!--ts-->
-   * [Pre Requisitos](#pre-requisitos)
-   * [Usage](#usage) 
-<!--te-->
-
-<h4 align="center"> 
-   🚀 Em construção...  🚧
+# CNPJs Info Scrapper Script ## Script feito para realizar Web Scrap em listas de CNPJs e retornar as informações da organização consultada.  ================= <!--ts--> * [Pre Requisitos](#pre-requisitos) * [Usage](#usage) <!--te--> <h4 align="center"> 🚀 Em construção...  🚧
 </h4>
 
 =================
@@ -41,4 +31,4 @@ $ cd cnpj-scrapper
 $ py -m pip install -r requirements.txt
 
 # Execute o script
-$ py main.py -h
+$ py main.py 

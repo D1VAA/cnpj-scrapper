@@ -19,7 +19,7 @@ async def parse_resp(cnpj, data, site, verbose) -> list or [str, str, list]:
         df = pd.DataFrame(ext, columns=[x for x in infos])
         return df
 
-    else:
+    elif 'cnpj.biz' in site:
         soup = BeautifulSoup(data, 'html.parser')
         title = [x.get_text() for x in soup.find_all('p') if 'Razão Social' in x.get_text()][0]
         c_name = title.replace('Razão Social: ', '')

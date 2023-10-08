@@ -8,10 +8,11 @@ async def parse_resp(i: list) -> pd.DataFrame:
     infos: list[str] = list()
     ext: list[dict] = list()
     try:
+        # Extract infos depending on site option
         for data in i:
             if 'speedio' in data['site']:
                 import json
-                j = json.loads(data['r'])
+                j = json.loads(data['response_html'])
                 infos = ['CNPJ', 'STATUS', 'SETOR', 'NOME FANTASIA',
                          'RAZAO SOCIAL', 'CNAE', 'CNAE PRINCIPAL CODIGO',
                          'EMAIL', 'DDD', 'TELEFONE', 'CEP']
@@ -24,7 +25,7 @@ async def parse_resp(i: list) -> pd.DataFrame:
                     print(f'{Colors.PURPLE}{ext["CNAE PRINCIPAL CODIGO"]},{Colors.RESET}', end='\n\n\n\n')
 
             elif 'cnpj.biz' in data['site']:
-                soup = BeautifulSoup(data['r'], 'html.parser')
+                soup = BeautifulSoup(data['response_html'], 'html.parser')
                 title = [x.get_text() for x in soup.find_all('p') if 'Razão Social' in x.get_text()][0]
                 c_name = title.replace('Razão Social: ', '')
                 cnaes = soup.find_all('u')  # Company name
