@@ -1,5 +1,4 @@
 ================= ### Features
-- [x] DataFrame Handler para arquios grandes.
 - [x] CNPJs Scrapper.
 - [ ] Fully functional query site options.
 - [ ] File export options.
