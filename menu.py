@@ -16,6 +16,7 @@ t = '''
 --                      |__/ \______/                                              |__/      |__/
 '''
 
+
 class MenuConstructor:
     def __init__(self, title=None):
         self.title = f'{title}' if title is not None else t
@@ -25,15 +26,15 @@ class MenuConstructor:
                        'run': self._execute_func}
         self.opt = dict()
         self.params_funcs = dict()
+        self.executions = dict()
         print(f'\n\n{Colors.YELLOW}[+]{Colors.RESET} Starting console...')
         print(self.title, end='\n\n')
 
-    def add_option(self, opt_title, opts: list = None, func=None):
+    def add_option(self, opt_title, func=None):
         """
         Simple menu option creator
-        :param attr: used if the option shoul return a function
         :param opt_title: for name the option
-        :param opts: list that contain the valid options
+        :param func: used if the option shoul return a function
         """
         self.opt[opt_title] = func
 
@@ -114,8 +115,15 @@ class MenuConstructor:
 
     def _update_p_value(self, func, param, value):
         func_name = func.__name__
-        value = str(value) if not value.isnumeric() else int(value)
-        old_v = self.params_funcs[func_name][param]
+        # Pass a function return as a parameter for other function
+        try:
+            if '$' in value:
+                v = value.replace('$', '')
+                name = self.opt[v].__name__
+                value = self.executions[name]
+        except Exception as e:
+            print(e)
+        old_v = self.params_funcs[func_name][param]  # Get the actual (old) parameter
         self.params_funcs[func_name][param] = value
         print('\n\n')
         print(
@@ -151,10 +159,10 @@ class MenuConstructor:
                         args[0] = func_name
                         args.append('_handle_params')
                     elif cmd == 'set':
-                        args.append(inp[-1])
+                        args.append(inp[2:])
                     cmds[cmd](*args)
 
-                elif cmd not in cmds and len(cmd) > 0:
+                else:
                     print(f"\n\n{Colors.RED}[?]{Colors.RESET} Comando inválido...\n\n")
 
             except KeyboardInterrupt:
@@ -169,7 +177,8 @@ class MenuConstructor:
         if bool(self.params_funcs[func_name]) and 'No Default Value' not in params_func.values():
             print(f"\n\n{Colors.PURPLE}[-]{Colors.RESET} Executando...\n\n")
             sleep(0.4)
-            func(**params_func)
+            e = func(**params_func)
+            self.executions[func_name] = e
             print(f"\n\n{Colors.GREEN}[✓]{Colors.RESET} Execução finalizada!\n\n")
 
         elif not bool(self.params_funcs[func_name]):
