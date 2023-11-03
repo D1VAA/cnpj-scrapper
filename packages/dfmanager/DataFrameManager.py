@@ -3,7 +3,7 @@ from typing import Iterator, Union
 from os.path import getsize
 import pandas as pd
 from pandas import DataFrame
-from packages.bcolors import Colors
+from ..bcolors import Colors
 from re import sub
 
 
@@ -11,7 +11,6 @@ class DataframeManager:
     """Classe para manipular dados de planilhas, incluindo aplicaçaão simples de filtros e tratamento de arquivos
     grandes."""
 
-    # url = 'https://api-publica.speedio.com.br/buscarcnpj?cnpj=00000000000191'
     # "https://www.listasdeempresa.com/criar"
 
     def __init__(self, path_file: str = None,
@@ -24,14 +23,14 @@ class DataframeManager:
         self.loaded_chunks = []  # List with all the chunks
         self.df = None  # Set a empty dataframe
 
-    def __load_dataframe(self, chunksize: int or None = None) -> DataFrame | iter:
+    def __load_dataframe(self, chunksize: int or None) -> DataFrame | iter:
         if self.path.endswith('.csv'):
             return pd.read_csv(self.path, chunksize=chunksize)
-
+            
         elif self.path.endswith('.xlsx'):
             return pd.read_excel(self.path)
 
-    def get_dataframe(self, s=1, step=2) -> Union[DataFrame, Iterator]:
+    def get_dataframe(self, s=1, step=1) -> Union[DataFrame, Iterator]:
         """
         Método que retorna o dataframe. Para arquivos largos, retorna em chunks
         :param s: value * 1000 (lines to be read per time)

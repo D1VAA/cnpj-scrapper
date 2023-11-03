@@ -4,6 +4,30 @@ from packages.dfmanager.DataFrameManager import DataframeManager
 from packages.scrapper import Scrapper
 #from packages.menu_constructor.menu import MenuConstructor
 
+def state(opt: ['write', 'read'], data=None):
+    def write(d=data):
+        try:
+            with open('state.txt', 'a+') as f:
+                for x in d:
+                    if x not in f.readlines():
+                        f.write(str(x) + '\n')
+
+        except Exception as e: 
+            print(f"[STATE] An exception occurred... {str(e)[:50]}")
+
+    def read():
+        try:
+            file = open('state.txt').readlines()
+            return file
+
+        except IOError: 
+            # print("[STATE] State file does not exist yet...")
+            return None
+
+    options = {'write': write, 'read': read}
+    return options[opt]()
+
+
 def get_cnaes():
     filterlist = {'Atividade': ['Comércio', 'Indústria']}
     data = DataframeManager('./sheets/CNAES.xlsx', filters=filterlist)
@@ -29,16 +53,18 @@ def get_cnpjs(size: int = 1):
     """
     filterlist = {'uf': ['SP', 'SC', 'RS']}
     data = DataframeManager('./sheets/empresas.csv', filters=filterlist)
-    g_dataframe = data.get_dataframe(size, step=2)
+    g_dataframe = data.get_dataframe(size, step=1)
 
     # Select cnpj column
     dataframe = g_dataframe['cnpj']
+    past_querys = state(opt='read')
+    dataframe = dataframe[~dataframe.isin(past_querys)] if past_querys is not None else dataframe
     return dataframe
 
 cnpjs = get_cnpjs()
 scrap = Scrapper(cnpjs, 'cnpj.biz', show_results=True, verbose=True) # Setup the scrapper
 results = scrap.run()
 
-#results['CNAES'] = results['CNAES'].str.split(',')
-#results = results.explode('CNAES')
-#results.to_excel('Result.xlsx')
+results['CNAES'] = results['CNAES'].str.split(',')
+results = results.explode('CNAES')
+results.to_excel('Result.xlsx')

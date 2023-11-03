@@ -14,7 +14,6 @@ def decode_email_protection(encoded_email):
             decoded = html.unescape(urllib.parse.unquote(decoded))
             return decoded
         except Exception as e:
-            print(e)
             return ""
 
     pattern = r'<a href="/cdn-cgi/l/email-protection#([a-fA-F0-9]+)">(.+?)</a>'
@@ -27,8 +26,11 @@ def decode_email_protection(encoded_email):
     return decoded_emails
 
 def email_extractor(a_email) -> list:
-    for data in a_email:
-        href = data['href']
-        if 'email-protection#' in href:
-            decoded = decode_email_protection(str(data))
-    return decoded
+    try:
+        for data in a_email:
+            href = data['href']
+            if 'email-protection#' in href:
+                decoded = decode_email_protection(str(data))
+        return decoded[0]
+    except Exception:
+        return 'Não encontrado'

@@ -4,6 +4,7 @@ import aiohttp
 import asyncio
 import pandas as pd
 from packages.html_handler import parse_resp
+from os.path import getsize, isfile
 
 from packages.bcolors import Colors
 
@@ -59,10 +60,11 @@ class Scrapper:
                     batch_data = self.dataframe[start_i:end_i]
                     tasks = [asyncio.create_task(self._request(session, cnpj)) for cnpj in batch_data]
                     await asyncio.gather(*tasks)
-                    await asyncio.sleep(4)
+                    await asyncio.sleep(2)
         except Exception as e:
             print(f"An exception occurred... {str(e)[:50]}")
 
+        print('Total...', len(self.dict_data))
         self.result = await parse_resp(self.dict_data)
 
     def run(self, outformat='dataframe'):
