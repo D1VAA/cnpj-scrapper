@@ -9,13 +9,13 @@ from packages.bcolors import Colors
 
 
 class Scrapper:
-    def __init__(self, df, site):
+    def __init__(self, df, site, show_results=False, verbose=False):
         """
         :type site: str
         :type df: pd.DataFrame
         """
-        self.verbose: bool = None
-        self.show_results: bool = None
+        self.verbose: bool = verbose
+        self.show_results: bool = show_results
         self.outformat = None  # For later implementation
         self.dataframe: pd.DataFrame = df
         self.site: str = site
@@ -36,7 +36,6 @@ class Scrapper:
                         f'{Colors.YELLOW}|CONSULTA| [CNPJ] > {Colors.PURPLE}{cnpj}{Colors.RESET}',
                         end='\n\n')
                 r = await response.read() # Site Response (HTML)
-                #print(response.status)
                 # Save cnpj, site response, site name show_results option (verbose)
                 self.dict_data.append({'cnpj': cnpj, 'response_html': r, 'site': self.site, 'sw_res': self.show_results})
 
@@ -64,12 +63,9 @@ class Scrapper:
         except Exception as e:
             print(f"An exception occurred... {str(e)[:50]}")
 
-        # Parse results after all the execution
         self.result = await parse_resp(self.dict_data)
 
-    def run(self, show_results=False, verbose=False, outformat='dataframe'):
-        self.show_results = show_results
-        self.verbose = verbose
+    def run(self, outformat='dataframe'):
         self.outformat = outformat
 
         if outformat not in ['dataframe', 'dict']:
