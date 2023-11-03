@@ -1,10 +1,8 @@
 from __future__ import annotations
 import pandas as pd
-import asyncio
 from packages.dfmanager.DataFrameManager import DataframeManager
 from packages.scrapper import Scrapper
-from packages.menu_constructor.menu import MenuConstructor
-
+#from packages.menu_constructor.menu import MenuConstructor
 
 def get_cnaes():
     filterlist = {'Atividade': ['Comércio', 'Indústria']}
@@ -31,16 +29,16 @@ def get_cnpjs(size: int = 1):
     """
     filterlist = {'uf': ['SP', 'SC', 'RS']}
     data = DataframeManager('./sheets/empresas.csv', filters=filterlist)
-    g_dataframe = data.get_dataframe(size)
+    g_dataframe = data.get_dataframe(size, step=2)
 
     # Select cnpj column
     dataframe = g_dataframe['cnpj']
     return dataframe
 
-scrap = Scrapper(get_cnpjs(), 'cnpj.biz')
-results = scrap.run(verbose=True, show_results=True)
-print(results)
+cnpjs = get_cnpjs()
+scrap = Scrapper(cnpjs, 'cnpj.biz', show_results=True, verbose=True) # Setup the scrapper
+results = scrap.run()
 
-results['CNAES'] = results['CNAES'].str.split(',')
-results = results.explode('CNAES')
-results.to_excel('Result.xlsx')
+#results['CNAES'] = results['CNAES'].str.split(',')
+#results = results.explode('CNAES')
+#results.to_excel('Result.xlsx')
