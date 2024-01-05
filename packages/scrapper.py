@@ -1,20 +1,15 @@
-from __future__ import annotations
-
 import aiohttp
 import asyncio
 import pandas as pd
-from packages.html_handler import parse_resp
+from packages.html_handler import Parser
 from os.path import getsize, isfile
+from time import sleep
 
 from packages.bcolors import Colors
 
 
 class Scrapper:
-    def __init__(self, df, site, show_results=False, verbose=False):
-        """
-        :type site: str
-        :type df: pd.DataFrame
-        """
+    def __init__(self, df: pd.DataFrame, site: str, show_results: bool=False, verbose: bool=False):
         self.verbose: bool = verbose
         self.show_results: bool = show_results
         self.outformat = None  # For later implementation
@@ -22,7 +17,7 @@ class Scrapper:
         self.site: str = site
         self.result: pd.DataFrame = None
         self.dict_data: list[dict] = list()
-        self.url = {'cnpj.biz': 'https://cnpj.biz/', 'speedio': 'https://api-publica.speedio.com.br/buscarcnpj?cnpj='}
+        self.url = {'cnpj.biz': 'https://cnpj.biz/'}
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'
         }
@@ -34,27 +29,28 @@ class Scrapper:
                 response.raise_for_status()
                 if self.verbose:
                     print(
-                        f'{Colors.YELLOW}|CONSULTA| [CNPJ] > {Colors.PURPLE}{cnpj}{Colors.RESET}',
-                        end='\n\n')
+                        f'{Colors.GREEN}[ OK ]{Colors.RESET} CNPJ: {cnpj}')
                 r = await response.read() # Site Response (HTML)
                 # Save cnpj, site response, site name show_results option (verbose)
-                self.dict_data.append({'cnpj': cnpj, 'response_html': r, 'site': self.site, 'sw_res': self.show_results})
-
-            except Exception as e:
-                print(e)
+                self.dict_data.append({'cnpj': cnpj, 
+                                       'response_html': r, 
+                                       'site': self.site, 
+                                       'sw_res': self.show_results})
+            except Exception:
+                print(f'{Colors.RED}[ ERROR ]{Colors.RESET} CNPJ: {cnpj}')
 
     async def __manage_requests(self):
         try:
             async with aiohttp.ClientSession() as session:
                 print('\n\n')
-                print(f'{Colors.PURPLE}[+]{Colors.RESET} Creating tasks...', end='\n\n')
+                print(f'{Colors.GREEN}[ OK ]{Colors.RESET} Creating tasks...', end='\n')
+                sleep(1)
                 batch_size = 3
                 total_batches = len(self.dataframe) // batch_size + 1
-                print(f'{Colors.PURPLE}[+]{Colors.RESET} Starting queries...', end='\n\n')
+                print('Total Batches: ', total_batches)
+                print(f'{Colors.BLUE}[ + ]{Colors.RESET} Starting queries...', end='\n\n')
                 for i in range(total_batches):
-                    print(
-                        f'\n{Colors.RED}[-]{Colors.RESET} Batch Nº >>> {Colors.CIAN}{i+1}{Colors.RESET}',
-                        end='\n\n')
+                    print(f'[-] Batch Nº: {i+1}')
                     start_i = i * batch_size
                     end_i = min(start_i + batch_size, len(self.dataframe))
                     batch_data = self.dataframe[start_i:end_i]
@@ -65,12 +61,8 @@ class Scrapper:
             print(f"An exception occurred... {str(e)[:50]}")
 
         print('Total...', len(self.dict_data))
-        self.result = await parse_resp(self.dict_data)
+        self.result = Parser(self.dict_data).parse_resp()
 
-    def run(self, outformat='dataframe'):
-        self.outformat = outformat
-
-        if outformat not in ['dataframe', 'dict']:
-            raise ValueError("Invalid value for outformat. Allowed values are 'dataframe' and 'dict'.")
+    def run(self):
         asyncio.run(self.__manage_requests())
         return self.result

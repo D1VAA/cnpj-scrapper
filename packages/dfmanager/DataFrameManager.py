@@ -1,15 +1,12 @@
-from __future__ import annotations
-from typing import Iterator, Union
+from typing import Iterator, Union, Dict, List
 from os.path import getsize
 import pandas as pd
-from pandas import DataFrame
+from pandas import DataFrame, TextFileReader
 from ..bcolors import Colors
-from re import sub
 
 
 class DataframeManager:
-    """Classe para manipular dados de planilhas, incluindo aplicaçaão simples de filtros e tratamento de arquivos
-    grandes."""
+    """Classe para manipular dados de planilhas, incluindo aplicaçaão simples de filtros e tratamento de arquivos grandes."""
 
     # "https://www.listasdeempresa.com/criar"
 
@@ -20,17 +17,17 @@ class DataframeManager:
         self.data = data
         self.filters = filters
 
-        self.loaded_chunks = []  # List with all the chunks
+        self.loaded_chunks = []  # List with all the chunks, for big sized files
         self.df = None  # Set a empty dataframe
 
-    def __load_dataframe(self, chunksize: int or None) -> DataFrame | iter:
+    def __load_dataframe(self, chunksize: int or None) -> DataFrame | TextFileReader:
         if self.path.endswith('.csv'):
             return pd.read_csv(self.path, chunksize=chunksize)
             
         elif self.path.endswith('.xlsx'):
             return pd.read_excel(self.path)
 
-    def get_dataframe(self, s=1, step=1) -> Union[DataFrame, Iterator]:
+    def get_dataframe(self, s: int=1, step: int=1) -> Union[DataFrame, Iterator]:
         """
         Método que retorna o dataframe. Para arquivos largos, retorna em chunks
         :param s: value * 1000 (lines to be read per time)
@@ -63,43 +60,36 @@ class DataframeManager:
 
         return self.df
 
-    def apply_filters(self, filters: dict[str, Union[list[str], str]] = None) -> DataFrame:
+    def apply_filters(self, filters: Dict[str, Union[List[str], str]] = None) -> None:
         """
         Aplica os filtros especificados ao dataframe atual.
         Args:
-            filters (dict[str, Union[list[str], str]]): Um dicionário onde a chave é o
-                nome da coluna e os valores são os filtros a serem aplicados à coluna.
-                Os filtros podem ser uma lista de strings ou uma string única.
-        Returns:    
-            DataframeManager: Retorna uma instância da classe DataframeManager com
-                o dataframe atualizado.
+            filters (dict[str, Union[list[str], str]]): Um dicionário onde a chave é o nome da coluna e os valores são os filtros a serem aplicados à coluna.
+            Os filtros podem ser uma lista de strings ou uma string única.
         """
+        assert filter is not None, ("Invalid filter.")
+            
         first_key = list(filters.keys())[0]
         if not isinstance(filters[first_key], list) and filters is not None:
             try:
                 for k, v in filters.items():
                     filters.update({k: v.tolist()})
-
-            except Exception:
+            except:
                 for k, v in filters.items():
                     filters.update({k: list(v)})
-
-        assert not isinstance(filters, list), \
-            'The filter passed is not a list. Please change the data type and try again.'
 
         repl = ';/.,-\\=-!@#$%¨&*()`[]?:|'
         empty_str = ' ' * len(repl)
         table = str.maketrans(repl, empty_str)
 
         filters = {k.translate(table): [val.translate(table) for val in v] for k, v in filters.items()}
-        if filters is not None:
-            for col, cond in filters.items():
-                try:
-                    if isinstance(cond, list):
-                        self.df = self.df[self.df[col].isin(cond)]
-                    else:
-                        self.df = self.df[col] == cond
+        for col, cond in filters.items():
+            try:
+                if isinstance(cond, list):
+                    self.df = self.df[self.df[col].isin(cond)]
+                else:
+                    self.df = self.df[col] == cond
 
-                except KeyError as e:
-                    print('Ocorreu um erro tentando aplicar os filtros')
-                    print('Nome de coluna não encontrado: ', e)
+            except KeyError as e:
+                print('Ocorreu um erro tentando aplicar os filtros')
+                print('Nome de coluna não encontrado: ', e)
