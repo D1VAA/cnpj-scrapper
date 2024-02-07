@@ -1,7 +1,7 @@
 from typing import Iterator, Union, Dict, List
 from os.path import getsize
 import pandas as pd
-from pandas import DataFrame, TextFileReader
+from pandas import DataFrame
 from ..bcolors import Colors
 
 
@@ -20,7 +20,7 @@ class DataframeManager:
         self.loaded_chunks = []  # List with all the chunks, for big sized files
         self.df = None  # Set a empty dataframe
 
-    def __load_dataframe(self, chunksize: int or None) -> DataFrame | TextFileReader:
+    def __load_dataframe(self, chunksize: int or None) -> DataFrame:
         if self.path.endswith('.csv'):
             return pd.read_csv(self.path, chunksize=chunksize)
             
